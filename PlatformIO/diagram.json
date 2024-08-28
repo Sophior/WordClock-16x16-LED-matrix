@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "author": "Tim Van Laere",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": -48, "left": -33.56, "attrs": {} },
+    {
+      "type": "wokwi-neopixel-canvas",
+      "id": "neopixels",
+      "top": -416,
+      "left": -378.1,
+      "attrs": {
+        "rows": "16",
+        "cols": "16",
+        "_temp_gamma": ".7",
+        "pixelate": "1",
+        "matrixLayout": "serpentine"
+      }
+    }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "esp:13", "neopixels:DIN", "blue", [ "h0" ] ],
+    [ "esp:5V", "neopixels:VDD", "red", [ "h0" ] ],
+    [ "esp:CMD", "neopixels:VSS", "green", [ "h0" ] ]
+  ],
+  "dependencies": {}
+}
