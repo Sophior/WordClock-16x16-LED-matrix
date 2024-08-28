@@ -4,23 +4,6 @@
 #include <FastLED.h>
 #include <WiFi.h>
 
-//  WiFi.begin("Wokwi-GUEST", "", 6);
-const char* ssid     = "Wokwi-GUEST";
-const char* password  = "";
-
-#define NTP_SERVER     "pool.ntp.org"
-#define UTC_OFFSET     1
-#define UTC_OFFSET_DST 2
-
-
-#define NUM_LEDS 256
-#define LED_TYPE WS2812B
-#define COLOR_ORDER RGB
-#define DATA_PIN 13 // define pin to connect DIN
-
-CRGB leds[NUM_LEDS];
-uint8_t ledBrightness = 100;
-
 
 // put function declarations here:
 void showWord(int index);
@@ -28,51 +11,85 @@ void setPixelColor(int i, uint32_t c0);
 uint8_t getRedValueFromColor(uint32_t c);
 uint8_t getGreenValueFromColor(uint32_t c);
 uint8_t getBlueValueFromColor(uint32_t c);
-uint32_t Color(byte r, byte g, byte b);
+uint32_t Color(byte b, byte g, byte r);
 
 void showClock();
 void getTimeViaWifi();
 void printLocalTime();
 
-uint8_t _whipeColor = Color(255,0,0);
-uint8_t _backColor = Color(0,0,0);
-uint8_t _frontColor = Color(0,255,0);
-
-String timezone = "CET-1CEST,M3.5.0,M10.5.0/3";
 void setTimezone(String timezone);
 void initTime(String timezone);
 
-// We adress per string section instead of specific led. Because we have 2 leds for 1 letter
+
+//  WiFi.begin("Wokwi-GUEST", "", 6);
+const char* ssid     = "Wokwi-GUEST";
+const char* password  = "";
+
+// SET YOUR COLORS
+// http://www.shodor.org/~efarrow/trunk/html/rgbint.html
+uint8_t _whipeColor =  Color(255,0,0);
+uint8_t _backColor =  Color(0,0,0);
+uint8_t _frontColor = Color(0,255,0); 
+
+
+#define NTP_SERVER     "pool.ntp.org"
+#define UTC_OFFSET     1
+#define UTC_OFFSET_DST 2
+String timezone = "CET-1CEST,M3.5.0,M10.5.0/3"; //  https://gist.github.com/alwynallan/24d96091655391107939
+
+
+
+#define NUM_LEDS 256
+#define LED_TYPE WS2812B
+#define DATA_PIN 13 // define pin to connect DIN
+
+CRGB leds[NUM_LEDS];
+uint8_t ledBrightness = 100;
+
+
+// These are all the letters of the front
+// While the matrix has 16x16 rows, we only have 16x8 letter rows.
+
+String _gridLayout = "HETPISAHALFKVIJF"
+                    "TIENFKWARTGOVERM"
+                    "PWIFIZBTIJDJVOOR"
+                    "UHALFBACHTEENZES"
+                    "TIENTWAALFZEVENT"
+                    "NEGENELFDRIEVIJF"
+                    "UTWEERVIERVTUURB"
+                    "J+Z1234SMINUTENX";
+
+// We adress per string section instead of specific led. Because we have 2 led rows for 1 letter
 int words[27][7]  = {
-{0,1,2}, // het
-{4,5}, // is
-{12,13,14,15}, // vijf
-{21,22,23,24,25}, // kwart
-{16,17,18,19}, // tien
-{27,28,29,30}, // over
-{44,45,46,47}, // voor
-{49, 50, 51, 52}, // half
-{108,109, 110}, // uur
-{58, 59, 60},// EEN
-{97,98, 99, 100},// TWEE
-{88, 89, 90, 91},// DRIE
-{102,103,104, 105},// VIER
-{92, 93, 94, 95},// VIJF
-{61, 61,61},// ZES
-{74,75,76,77,78},// ZEVEn
-{54,55,56,57},// ACHT
-{80,81,82,83,84},// NEGEN
-{64,65,66,67},// TIEN
-{85,86,87},// ELF (uren)
-{68,69,70,71,72,73},// TWAALF
-{113},// PLUS
-{115}, //1
-{116}, //2
-{117}, //3
-{118}, //4
-{120,121,122,123,124,125,126} // minuten
+    {0,1,2}, // het
+    {4,5}, // is
+    {12,13,14,15}, // vijf
+    {21,22,23,24,25}, // kwart
+    {16,17,18,19}, // tien
+    {27,28,29,30}, // over
+    {44,45,46,47}, // voor
+    {49, 50, 51, 52}, // half
+    {108,109, 110}, // uur
+    {58, 59, 60},// EEN
+    {97,98, 99, 100},// TWEE
+    {88, 89, 90, 91},// DRIE
+    {102,103,104, 105},// VIER
+    {92, 93, 94, 95},// VIJF
+    {61, 61,61},// ZES
+    {74,75,76,77,78},// ZEVEn
+    {54,55,56,57},// ACHT
+    {80,81,82,83,84},// NEGEN
+    {64,65,66,67},// TIEN
+    {85,86,87},// ELF (uren)
+    {68,69,70,71,72,73},// TWAALF
+    {113},// PLUS
+    {115}, //1
+    {116}, //2
+    {117}, //3
+    {118}, //4
+    {120,121,122,123,124,125,126} // minuten
 };
-String _gridLayout = "HETPISAHALFKVIJFTIENFKWARTGOVERMPWIFIZBTIJDJVOORUHALFBACHTEENZESTIENTWAALFZEVENTNEGENELFDRIEVIJFUTWEERVIERVTUURBJ+Z1234SMINUTENX";
+
 
 void setup() {
   Serial.begin(115200);
@@ -80,7 +97,7 @@ void setup() {
 
   getTimeViaWifi();
   // LED Init
-  FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds, NUM_LEDS).setDither(0);
+  FastLED.addLeds<LED_TYPE, DATA_PIN, RGB>(leds, NUM_LEDS).setDither(0);
   FastLED.setBrightness(ledBrightness);
   FastLED.show();
 
@@ -105,17 +122,18 @@ void showClock()
   printLocalTime();
   if(iLastMinute != iMinute || iLastHour != iHour)
   {
+    // animate clearning of the leds
     for(int r=0;r<16;r++)
     {
       for(int c=0;c<16;c++)
       {
-          setPixelColor((r*16)+c, Color(255,0,0));
+          setPixelColor((r*16)+c, _whipeColor);
           if(c>0)
           {
-            setPixelColor((r*16)+c-1, Color(0,0,0)); // previous one
+            setPixelColor((r*16)+c-1, _backColor); // clear the last one in the row 
           }
       }
-      setPixelColor((r*16)+15, Color(0,0,0)); // last in row
+      setPixelColor((r*16)+15,_backColor); // clear the last one in the row 
     }
   
   // divide minute by 5 to get value for display control
@@ -182,22 +200,21 @@ void showClock()
 
     if(minDiv>0 && minDiv<5)
     {
-    showWord(21); // plus
-    showWord(21+minDiv);
-    showWord(26); // minuten
+        showWord(21); // plus
+        showWord(21+minDiv);
+        showWord(26); // minuten
     }
     else if( minDiv == 0)
     {
-    showWord(8); // "UUr"
+        showWord(8); // "Uur"
     }
 
     FastLED.show();
   }
 
+  // Save the last shown time
   iLastMinute = iMinute;
   iLastHour = iHour;
-
-
 }
 void getTimeViaWifi()
 {
@@ -216,7 +233,7 @@ void initTime(String timezone)
 {
   struct tm timeinfo;
   Serial.println("Setting up time");
-  configTime(0, 0, "pool.ntp.org");    // First connect to NTP server, with 0 TZ offset
+  configTime(0, 0, NTP_SERVER);    // First connect to NTP server, with 0 TZ offset
   if(!getLocalTime(&timeinfo)){
     Serial.println("  Failed to obtain time");
     return;
@@ -269,54 +286,42 @@ void showWord(int index)
 int _wordmodifier = 0;
 for(int x=0;x<16;x++)
 {
+
+// here we translate the 16 rows to 8 rows of text
   if( x>0&&x%2==0) 
   {
-	  _wordmodifier = floor(x/2)*16;
+      _wordmodifier = floor(x/2)*16;
   	if(_wordmodifier%2!=0)
-	  {
-  	  _wordmodifier-=1;
-	  }
+	{
+  	    _wordmodifier-=1;
+	}
   }
-  Serial.print("Modifier ");
-  Serial.println(_wordmodifier);
+  //Serial.print("Modifier ");
+  //Serial.println(_wordmodifier);
   
 	for(int y=0;y<16;y++)
 	{
-    Serial.print(_wordmodifier+y);
-
-    for(int wordletter : _activeLettersFromWords)
-    {
-      if(wordletter == _wordmodifier+y)
-      {
-     		Serial.print( _gridLayout[(_wordmodifier + y )]);
-         Serial.print( " on " );
-         Serial.print(((x*16) + y )); // LED
-if(x%2!=0) // skip the extra row
-{       setPixelColor(((x*16) + y), Color(0,0,255));
-}
-      
-       
-         Serial.println();
-      }
-      /*
-      if(wordletter == ((_wordmodifier*x) + y))
-      {
-        Serial.print("Modified ");
-     		Serial.print( _gridLayout[(_wordmodifier + y )]);
-         Serial.print( " on " );
-         Serial.print(((_wordmodifier*x) + y)); // LED
-         setPixelColor(((_wordmodifier*x) + y), Color(255,0,0));
-         Serial.println();
-      }*/
-       // Serial.println("Letter:" + _letter);
-//          Serial.println("LED:");
-  //        Serial.println((x*16) + y );
-
-      //Serial.println(_wordmodifier);
-	    }
-
+        Serial.print(_wordmodifier+y);
+            for(int wordletter : _activeLettersFromWords)
+            {
+              if(wordletter == _wordmodifier+y)
+              {
+     		        Serial.print( _gridLayout[(_wordmodifier + y )]);
+                 Serial.print( " on " );
+                 Serial.print(((x*16) + y )); // LED
+                 Serial.println();
+                if(x%2!=0) // skip the extra row that is in reverse
+                {
+                    // BEcause there are 2 rows that are oriented like this:
+                    //  =========>==>==>==>==>==>===>=> LEFT TO RIGHT
+                    //  <=<===<==<==<=<=<=<=<=<=<=<<=<= RIGHT TO LEFT <== SKIP THIS ONE because the number lights up with one anyway
+                    //  =========>==>==>==>==>==>===>=> LEFT TO RIGHT
+                    setPixelColor(((x*16) + y),Color(0,255,0));
+                }
+              }
+	        }
+        }
     }
-  }
 }
 
 void setPixelColor(int i, uint32_t c0)
@@ -342,10 +347,10 @@ uint8_t getBlueValueFromColor(uint32_t c) {
 uint32_t Color(byte r, byte g, byte b)
 {
   uint32_t c;
-  c = r;
-  c <<= 8;
-  c |= g;
+  c = g;
   c <<= 8;
   c |= b;
+  c <<= 8;
+  c |= r;
   return c;
 }
