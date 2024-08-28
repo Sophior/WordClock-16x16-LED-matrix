@@ -1,67 +1,14 @@
 # WordClock-16x16-LED-matrix
 
-WordClock 16x16 LED matrix, super easy build, 3 wires to solder only. Telegram, smart home and ext. events integration
+Based on the great work of <a href="https://github.com/AWSW-de/WordClock-16x16-LED-matrix">AWSW</a>
 
-Code for the <a href="https://www.printables.com/de/search/models?q=WordClock%2016x16%20@awsw&ctx=models">WordClock 16x16 LED matrix projects</a> as 3D print on <a href="https://www.printables.com">www.printables.com</a>
+While trying to run it on a simple ESP32-CAM I came across some issues
 
+* Settings didn't work with that ESP32
+* The libraries are quite big
+* The pixel library didn't work for me
+* Base files for PlatformIO and WokWi emulator (you can skip this and just copy the code from the main.cpp in an ino file and be done)
 
-WordClock can be used in "Online Mode" with all the smart functions controlled via your network environment and otional via Telegram and also in "Offline Mode" where you can use the time piece function only without the need of a local WiFi. In both operation modes you can configure the device via the shown internal web portal.
+So this version is reduced to FastLED with a time server.
 
-**Layouts for DE, EN, NL, FR, IT and SWE available:**
-
-<img src="./Images/WordClock_DE_EN.png">
-<img src="./Images/WordClock_NL.jpg">
-<img src="./Images/WordClock_FR.jpg">
-<img src="./Images/WordClock_IT.png">
-<img src="./Images/WordClock_SWE.png">
-
-
-<hr>
-
-
-Setup video instructions available for <a href="https://www.youtube.com/watch?v=BrVKY1sfZgI">Microsoft Windows 10/11</a> and <a href="https://www.youtube.com/watch?v=GptDFKhga0k">Apple macOS</a>.
-
-[![Setup Arduino on MS Windows for WordClock](http://img.youtube.com/vi/BrVKY1sfZgI/0.jpg)](http://www.youtube.com/watch?v=BrVKY1sfZgI "Setup Arduino on MS Windows for WordClock")
-
-
-[![Setup Arduino on macOS for WordClock](http://img.youtube.com/vi/GptDFKhga0k/0.jpg)](http://www.youtube.com/watch?v=GptDFKhga0k "Setup Arduino on macOS for WordClock")
-
-
-[![AWSW WordClock WiFi setup](http://img.youtube.com/vi/RMOl2nNKyl0/0.jpg)](http://www.youtube.com/watch?v=RMOl2nNKyl0 "AWSW WordClock WiFi setup")
-
-
-[![Software update 1 in 2024 for the WordClock 16x16 of AWSW](http://img.youtube.com/vi/SD_I2_AQJU0/0.jpg)](http://www.youtube.com/watch?v=SD_I2_AQJU0 "Software update 1 in 2024 for the WordClock 16x16 of AWSW")
-
-
-The project was also shown on the "Conrad TechnikHelden" channel: Thanks guys for the nice video! =)
-
-[![DIY Word Clock bauen | Conrad TechnikHelden](http://img.youtube.com/vi/djyEdhgWDTk/0.jpg)](http://www.youtube.com/watch?v=djyEdhgWDTk "DIY Word Clock bauen | Conrad TechnikHelden")
-
-
-<hr>
-
-
-<a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/3.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/">Creative Commons Attribution-NonCommercial 3.0 Unported License</a>.
-
-
-<hr>
-
-
-**Pictures of the “Online Mode” of V3.2.0:** 
-<img src="./Images/IMG_0245.jpg">
-<img src="./Images/IMG_0246.jpg">
-<img src="./Images/IMG_0247.jpg">
-<img src="./Images/IMG_0248.jpg">
-
-
-
-**Pictures of the “Offline Mode” of V3.2.0:**
-<img src="./Images/IMG_0243.jpg">
-<img src="./Images/IMG_0244.jpg">
-
-
-
-**Picture of the internal web server commands and Telegram usage:**
-<img src="./Images/IMG_2836.png">
-<img src="./Images/WordClock_web4.JPG">
 
